@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Agenda des activités – Courbevoie</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto+Condensed:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
 <style>
 :root{
@@ -14,7 +14,7 @@
   --ink:#1A1A8C; --muted:#6B6B8F; --faint:#B3B3CC; --warn:#D93A50;
 }
 *{box-sizing:border-box}
-html,body{margin:0;background:#fff;color:var(--ink);font-family:"Barlow Condensed","Roboto Condensed",system-ui,sans-serif;font-weight:500}
+html,body{margin:0;background:#fff;color:var(--ink);font-family:"Roboto Condensed",system-ui,sans-serif;font-weight:400}
 body{padding:16px}
 button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
@@ -126,6 +126,11 @@ button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
   body{padding:10px}
   .titles h1{font-size:40px}.month{font-size:22px}
 }
+
+/* Typographies */
+.titles h1,.month span,.dh .n,.daytitle h2,.dy b,.sheet h3,.card h3{font-family:Anton,"Roboto Condensed",sans-serif;font-weight:400;letter-spacing:.2px}
+.pill,.pill .n,.wk,.wk small,.dy{font-family:"Roboto Condensed",sans-serif;font-weight:400}
+.seg button,.today-btn,.arrow,.sheet .close{font-family:"Roboto Condensed",sans-serif;font-weight:700}
 </style>
 </head>
 <body>
