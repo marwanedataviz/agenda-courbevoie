@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Annuaire des associations · Courbevoie</title>
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto+Condensed:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#172086; --ink:#172086; --muted:#6b6f93; --line:#dfe3f3; --bg:#ffffff; --blob:#d9a6ea;
+    --sky:#bad8f4; --lilac:#e8cbf4; --yellow:#f3e288; --mint:#c7edd4; --sand:#efdead; --lav:#dcdcf2; --green:#a0dab5; --pale:#dfeefb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Roboto Condensed",system-ui,sans-serif;}
+  button{font-family:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:52px 36px 80px;}
+  .fade{animation:fade .28s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* ----- Accueil ----- */
+  .head{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:end;margin-bottom:34px;}
+  h1{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:66px;line-height:1.02;margin:0;color:var(--navy);position:relative;}
+  h1 .hl{position:relative;display:inline-block;z-index:0}
+  h1 .hl::before{content:"";position:absolute;left:-10px;right:-14px;top:12%;bottom:4%;background:var(--blob);border-radius:60% 40% 55% 45%/55% 45% 60% 40%;transform:rotate(-3deg);z-index:-1;opacity:.85}
+  .intro{color:var(--muted);font-size:17px;line-height:1.5;margin:0 0 8px;font-weight:400;max-width:380px}
+  .tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+  .lbl{font:700 17px "Roboto Condensed";letter-spacing:.6px;margin-right:4px}
+  .tab{border:2.5px solid var(--navy);background:#fff;color:var(--navy);border-radius:999px;padding:8px 22px;font:700 19px "Roboto Condensed";cursor:pointer}
+  .tab.on{background:var(--navy);color:#fff}
+  .search{margin-left:auto;display:flex;align-items:center;gap:10px;border:2.5px solid var(--navy);border-radius:999px;padding:9px 20px;min-width:300px}
+  .search input{border:0;outline:0;font:500 18px "Roboto Condensed";color:var(--navy);width:100%;background:transparent}
+  .search input::placeholder{color:#8e93c2}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .tile{border:0;border-radius:20px;aspect-ratio:4/5;padding:22px 24px 24px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;text-align:left;color:var(--navy);transition:transform .15s,box-shadow .15s}
+  .tile:hover{transform:translateY(-4px);box-shadow:0 16px 30px rgba(23,32,134,.14)}
+  .tile svg{width:76%;align-self:center;margin-top:10px}
+  .tile .t{font:700 24px/1.15 "Roboto Condensed"}
+  .tile .n{display:block;font:400 15px "Roboto Condensed";opacity:.75;margin-top:4px}
+
+  /* ----- Liste ----- */
+  .crumb{border:0;background:none;color:var(--navy);font:700 17px "Roboto Condensed";cursor:pointer;padding:0;margin-bottom:24px}
+  .crumb:hover{text-decoration:underline}
+  .lhead{display:grid;grid-template-columns:1fr auto;align-items:end;gap:20px;border-bottom:3px solid var(--navy);padding-bottom:18px}
+  .lhead h2{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:58px;line-height:1;margin:0}
+  .lhead .count{font:500 18px "Roboto Condensed";color:var(--muted)}
+  .lhead .pic{width:120px;height:96px;border-radius:16px;display:grid;place-items:center}
+  .lhead .pic svg{width:80%}
+  .row{display:grid;grid-template-columns:56px 1fr 200px 32px;gap:18px;align-items:center;padding:18px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+  .row:hover{background:#f6f8fe}
+  .row .ini{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:400 20px Anton,sans-serif}
+  .row .nm{font:700 23px/1.15 "Roboto Condensed"}
+  .row .sub{font:400 15px "Roboto Condensed";color:var(--muted);margin-top:3px}
+  .row .q{font:500 16px "Roboto Condensed";color:var(--muted);text-align:right}
+  .row .arr{font-size:24px;text-align:right}
+
+  /* ----- Fiche ----- */
+  .frame{border-radius:26px;padding:42px}
+  .sheet{background:#fff;border-radius:6px;padding:40px 52px 54px}
+  .sheet .crumb{margin-bottom:30px}
+  .kicker{font:700 15px "Roboto Condensed";letter-spacing:1.4px;text-transform:uppercase;color:var(--muted)}
+  .sheet h2{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:60px;line-height:1.04;margin:10px 0 34px;max-width:820px}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);border-left:1px solid var(--navy);margin-bottom:40px}
+  .col{border-right:1px solid var(--navy);padding:2px 18px 6px}
+  .col:last-child{border-right:0}
+  .col .h{font:500 14px "Roboto Condensed";margin-bottom:10px;color:var(--muted)}
+  .col .v{font:700 21px/1.3 "Roboto Condensed"}
+  .col .v span{display:block}
+  .body{display:grid;grid-template-columns:1fr 1.15fr;gap:44px;align-items:start}
+  .photo{border-radius:16px;aspect-ratio:4/3.3;display:grid;place-items:center;overflow:hidden;position:relative}
+  .photo img{width:100%;height:100%;object-fit:cover}
+  .photo svg{width:56%}
+  .photo .ph{position:absolute;left:14px;bottom:12px;font:400 13px "Roboto Condensed";opacity:.7}
+  .days{display:flex;flex-wrap:wrap;gap:5px}
+  .d{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:700 13px "Roboto Condensed";background:#eef0f8;color:#b2b6d6}
+  .d.on{background:var(--navy);color:#fff}
+  .text{font:300 21px/1.55 "Roboto Condensed"}
+  .text p{margin:0 0 16px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .tag{border-radius:999px;padding:6px 14px;font:500 15px "Roboto Condensed";background:#eef3fb}
+  .contact{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+  .btn{border:2.5px solid var(--navy);border-radius:999px;padding:9px 20px;font:700 17px "Roboto Condensed";color:var(--navy);text-decoration:none;background:#fff}
+  .btn.full{background:var(--navy);color:#fff}
+  .empty{color:var(--muted);font-size:18px;padding:40px 0}
+  @media(max-width:900px){.tiles{grid-template-columns:repeat(2,1fr)}.head{grid-template-columns:1fr}h1{font-size:46px}.cols{grid-template-columns:1fr}.col{border-right:0;padding-bottom:14px}.body{grid-template-columns:1fr}.frame{padding:14px}.sheet{padding:26px}.sheet h2{font-size:42px}.row{grid-template-columns:48px 1fr 28px}.row .q{display:none}.search{min-width:0;flex:1}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const S='stroke="#172086" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"';
+const ICON={
+ "Sport":`<svg viewBox="0 0 200 170"><circle cx="100" cy="80" r="56" fill="#fff" ${S}/><path d="M100 24v112M44 80h112M62 40c22 18 22 62 0 80M138 40c-22 18-22 62 0 80" fill="none" ${S}/><path d="M60 156h80" ${S}/></svg>`,
+ "Culture":`<svg viewBox="0 0 200 170"><path d="M40 30h60v50c0 20-14 34-30 34S40 100 40 80Z" fill="#fff" ${S}/><path d="M100 50h60v50c0 20-14 34-30 34s-30-14-30-34Z" fill="#fff" ${S}/><path d="M55 62h8M78 62h8M58 88c6 6 18 6 24 0M115 82h8M138 82h8M118 112c6-6 18-6 24 0" fill="none" ${S}/><path d="M30 156h140" ${S}/></svg>`,
+ "Bien-être":`<svg viewBox="0 0 200 170"><path d="M100 40c18 22 18 58 0 80-18-22-18-58 0-80Z" fill="#fff" ${S}/><path d="M100 120c-30 0-54-18-60-46 28 0 50 16 60 46ZM100 120c30 0 54-18 60-46-28 0-50 16-60 46Z" fill="#fff" ${S}/><path d="M50 150c30-10 70-10 100 0" fill="none" ${S}/><circle cx="100" cy="18" r="6" fill="#172086"/></svg>`,
+ "Loisirs créatifs":`<svg viewBox="0 0 200 170"><path d="M130 22l26 26-62 62-32 6 6-32Z" fill="#fff" ${S}/><path d="M118 34l26 26" ${S}/><path d="M68 116c-14 2-24 12-26 30 18-2 28-12 30-26" fill="#172086" ${S}/><circle cx="150" cy="128" r="14" fill="#fff" ${S}/><circle cx="40" cy="44" r="6" fill="#172086"/></svg>`,
+ "Éducation / langues":`<svg viewBox="0 0 200 170"><path d="M30 46c26-10 50-10 70 4v100c-20-14-44-14-70-4Z" fill="#fff" ${S}/><path d="M170 46c-26-10-50-10-70 4v100c20-14 44-14 70-4Z" fill="#fff" ${S}/><path d="M120 22h56v30h-34l-14 12v-12h-8Z" fill="#fff" ${S}/><path d="M48 76h34M48 96h34M118 76h34M118 96h34" ${S}/></svg>`,
+ "Social / solidarité":`<svg viewBox="0 0 200 170"><path d="M100 62c-10-22-46-22-46 6 0 24 46 52 46 52s46-28 46-52c0-28-36-28-46-6Z" fill="#fff" ${S}/><path d="M20 140c20-14 40-18 60-10l20 10M180 140c-20-14-40-18-60-10l-20 10" fill="none" ${S}/></svg>`,
+ "Événement":`<svg viewBox="0 0 200 170"><path d="M20 40c50 26 110 26 160 0" fill="none" ${S}/><path d="M40 50l10 34 14-28M80 60l8 34 14-32M118 60l12 32 10-34M152 50l10 30 8-34" fill="#fff" ${S}/><path d="M60 150l20-40 20 40Z" fill="#fff" ${S}/><circle cx="150" cy="128" r="5" fill="#172086"/><circle cx="36" cy="120" r="5" fill="#172086"/><path d="M128 110l8 8M168 110l-8 8" ${S}/></svg>`,
+ "Environnement":`<svg viewBox="0 0 200 170"><path d="M66 100h68l-10 56H76Z" fill="#fff" ${S}/><path d="M100 100V44" ${S}/><path d="M100 70c-10-24-36-30-52-20 10 22 34 28 52 20ZM100 56c10-24 36-30 52-20-10 22-34 28-52 20Z" fill="#fff" ${S}/></svg>`,
+ /* publics */
+ "Petite enfance (0-5)":`<svg viewBox="0 0 200 170"><circle cx="100" cy="66" r="34" fill="#fff" ${S}/><path d="M86 62h2M112 62h2M90 80c6 6 14 6 20 0" ${S}/><path d="M100 100v20M82 156c0-24 8-36 18-36s18 12 18 36" fill="#fff" ${S}/><path d="M100 32c0-10 8-14 14-10" fill="none" ${S}/></svg>`,
+ "Enfants (6-11)":`<svg viewBox="0 0 200 170"><path d="M120 20l50 30-30 50-50-30Z" fill="#fff" ${S}/><path d="M120 100c-10 20-30 30-50 20s-30 10-40 30" fill="none" ${S}/><path d="M78 124l-10-8M58 132l-6-10" ${S}/></svg>`,
+ "Ados (12-17)":`<svg viewBox="0 0 200 170"><path d="M50 100c0-40 22-66 50-66s50 26 50 66" fill="none" ${S}/><rect x="34" y="92" width="30" height="46" rx="12" fill="#fff" ${S}/><rect x="136" y="92" width="30" height="46" rx="12" fill="#fff" ${S}/><path d="M86 150l14-22 14 22" fill="none" ${S}/></svg>`,
+ "Adultes":`<svg viewBox="0 0 200 170"><rect x="40" y="60" width="120" height="80" rx="12" fill="#fff" ${S}/><path d="M76 60V44h48v16M40 96h120" fill="none" ${S}/><circle cx="100" cy="96" r="7" fill="#172086"/></svg>`,
+ "Seniors (60+)":`<svg viewBox="0 0 200 170"><circle cx="70" cy="80" r="26" fill="#fff" ${S}/><circle cx="130" cy="80" r="26" fill="#fff" ${S}/><path d="M96 80h8M44 80H26M156 80h18" ${S}/><path d="M62 128c20 14 56 14 76 0" fill="none" ${S}/></svg>`,
+ "Familles":`<svg viewBox="0 0 200 170"><path d="M36 84l64-54 64 54v66H36Z" fill="#fff" ${S}/><path d="M86 150v-36h28v36" fill="none" ${S}/><path d="M100 72c-6-12-24-12-24 2 0 12 24 24 24 24s24-12 24-24c0-14-18-14-24-2Z" fill="#172086"/></svg>`,
+ "Tous publics":`<svg viewBox="0 0 200 170"><circle cx="60" cy="62" r="18" fill="#fff" ${S}/><circle cx="140" cy="62" r="18" fill="#fff" ${S}/><circle cx="100" cy="48" r="20" fill="#fff" ${S}/><path d="M30 140c0-30 14-46 30-46s30 16 30 46M110 140c0-30 14-46 30-46s30 16 30 46M70 140c0-36 14-54 30-54s30 18 30 54" fill="#fff" ${S}/></svg>`,
+ /* quartiers */
+ "_quartier":`<svg viewBox="0 0 200 170"><path d="M100 18c-26 0-44 20-44 44 0 34 44 78 44 78s44-44 44-78c0-24-18-44-44-44Z" fill="#fff" ${S}/><circle cx="100" cy="62" r="14" fill="#172086"/><path d="M20 156h30v-30h24v30h52v-40h24v40h30" fill="none" ${S}/></svg>`,
+ "_default":`<svg viewBox="0 0 200 170"><circle cx="100" cy="80" r="50" fill="#fff" ${S}/><path d="M80 80h40M100 60v40" ${S}/></svg>`
+};
+
+const PALETTE=["--sky","--lilac","--yellow","--mint","--sand","--lav","--green","--pale"];
+const ORDER={Domaine:["Sport","Culture","Bien-être","Loisirs créatifs","Éducation / langues","Social / solidarité","Événement","Environnement"],
+ Public:["Petite enfance (0-5)","Enfants (6-11)","Ados (12-17)","Adultes","Seniors (60+)","Familles","Tous publics"],
+ Quartier:["Bécon","Cœur de Ville","Faubourg de l'Arche","Gambetta"]};
+const LABEL={Domaine:"Domaine",Public:"Public",Quartier:"Quartier"};
+const JOURS=[["Lundi","L"],["Mardi","M"],["Mercredi","Me"],["Jeudi","J"],["Vendredi","V"],["Samedi","S"],["Dimanche","D"]];
+
+let ASSOS=[], state={view:"home",dim:"Domaine",val:null,id:null,q:""}, inGrist=false;
+const norm=s=>String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+function pick(rec,...names){const ks=Object.keys(rec);for(const n of names){const k=ks.find(k=>norm(k)===norm(n));if(k!==undefined&&rec[k]!=null&&rec[k]!=="")return rec[k];}return "";}
+const asList=v=>Array.isArray(v)?(v[0]==="L"?v.slice(1):v):(v?String(v).split(",").map(s=>s.trim()).filter(Boolean):[]);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toAsso=r=>({id:r.id,nom:pick(r,"Nom"),domaine:pick(r,"Domaine"),desc:pick(r,"Description"),pres:pick(r,"Presentation"),
+  publics:asList(pick(r,"Publics")),quartier:pick(r,"Quartier"),jours:String(pick(r,"Jours d'activite","Jours_d_activite")),
+  email:pick(r,"Email"),tel:pick(r,"Telephone"),site:pick(r,"Site web","Site_web"),insta:pick(r,"Instagram"),
+  statut:pick(r,"Statut"),image:pick(r,"Image","Photo","Logo")});
+const visible=()=>ASSOS.filter(a=>a.statut!=="À valider");
+const valuesOf=(a,dim)=>dim==="Public"?a.publics:[dim==="Domaine"?a.domaine:a.quartier];
+const colorFor=(dim,val)=>{let i=ORDER[dim].indexOf(val);if(i<0)i=[...String(val)].reduce((s,c)=>s+c.charCodeAt(0),0);if(dim==="Quartier")i=[0,1,3,2][i%4];return PALETTE[i%PALETTE.length];};
+const iconFor=(dim,val)=>dim==="Quartier"?ICON._quartier:(ICON[val]||ICON._default);
+const short=n=>n.replace(/^(Association|Atelier|Club|Collectif|Comité des fêtes)\s+/i,"");
+
+function go(s){Object.assign(state,s);render();window.scrollTo({top:0});}
+function render(){const app=document.getElementById("app");
+  app.innerHTML=state.view==="home"?home():state.view==="list"?list():fiche();
+  app.firstElementChild&&app.firstElementChild.classList.add("fade");bind();}
+
+function home(){
+  const vis=visible(),counts={};
+  vis.forEach(a=>valuesOf(a,state.dim).forEach(v=>{if(v)counts[v]=(counts[v]||0)+1;}));
+  const keys=[...ORDER[state.dim].filter(k=>counts[k]),...Object.keys(counts).filter(k=>!ORDER[state.dim].includes(k))];
+  const res=state.q?vis.filter(a=>norm([a.nom,a.desc,a.domaine,a.quartier].join(" ")).includes(norm(state.q))).sort((a,b)=>a.nom.localeCompare(b.nom,"fr")):null;
+  return `<div>
+   <div class="head"><h1>Les associations<br>de <span class="hl">Courbevoie</span></h1>
+    <p class="intro">Sport, culture, bien-être, solidarité… ${vis.length} associations font vivre la ville. Choisissez un domaine, un public ou un quartier pour découvrir celles qui vous correspondent.</p></div>
+   <div class="tools"><span class="lbl">VOIR PAR</span>${Object.keys(LABEL).map(d=>`<button class="tab ${state.dim===d?"on":""}" data-dim="${d}">${LABEL[d]}</button>`).join("")}
+    <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#172086" stroke-width="2.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" placeholder="Rechercher une association" value="${esc(state.q)}"></label></div>
+   ${res?`<div>${res.map(row).join("")||'<p class="empty">Aucune association trouvée.</p>'}</div>`:
+   `<div class="tiles">${keys.map(k=>`<button class="tile" style="background:var(${colorFor(state.dim,k)})" data-val="${esc(k)}">${iconFor(state.dim,k)}
+     <span class="t">${esc(k)}<span class="n">${counts[k]} association${counts[k]>1?"s":""}</span></span></button>`).join("")}</div>`}
+  </div>`;}
+function row(a){const c=colorFor("Domaine",a.domaine);
+  return `<div class="row" data-id="${a.id}"><span class="ini" style="background:var(${c})">${esc(short(a.nom).charAt(0))}</span>
+   <div><div class="nm">${esc(a.nom)}</div><div class="sub">${esc(a.domaine)} · ${esc(a.publics.join(", "))}</div></div>
+   <span class="q">${esc(a.quartier)}</span><span class="arr">→</span></div>`;}
+function list(){
+  const vis=visible().filter(a=>valuesOf(a,state.dim).includes(state.val)).sort((a,b)=>a.nom.localeCompare(b.nom,"fr"));
+  return `<div><button class="crumb" data-go="home">← Toutes les catégories</button>
+   <div class="lhead"><div><div class="kicker">${LABEL[state.dim]}</div><h2>${esc(state.val)}</h2><div class="count">${vis.length} association${vis.length>1?"s":""}</div></div>
+   <div class="pic" style="background:var(${colorFor(state.dim,state.val)})">${iconFor(state.dim,state.val)}</div></div>
+   <div>${vis.map(row).join("")}</div></div>`;}
+function fiche(){
+  const a=ASSOS.find(x=>x.id===state.id); if(!a) return `<p class="empty">Association introuvable.</p>`;
+  const c=colorFor("Domaine",a.domaine);
+  const img=a.image&&/^https?:/.test(a.image)?`<img src="${esc(a.image)}" alt="">`:`${iconFor("Domaine",a.domaine)}<span class="ph">Photo de l'association</span>`;
+  const pres=(a.pres||a.desc||"").split(/(?<=\.)\s+(?=[A-ZÉÈ])/);
+  const paras=[pres.slice(0,2).join(" "),pres.slice(2).join(" ")].filter(Boolean);
+  const disc=String(a.desc).replace(/^Activités proposées\s*:\s*/,"").replace(/\.$/,"").split(",").map(s=>s.trim()).filter(Boolean);
+  return `<div class="frame" style="background:var(${c})"><div class="sheet">
+   <button class="crumb" data-go="${state.val?"list":"home"}">← ${esc(state.val||"Toutes les catégories")}</button>
+   <div class="kicker">${esc(a.domaine)}</div><h2>${esc(a.nom)}</h2>
+   <div class="cols">
+     <div class="col"><div class="h">Quartier</div><div class="v">${esc(a.quartier)}</div></div>
+     <div class="col"><div class="h">Pour qui</div><div class="v">${esc(a.publics.join(", "))}</div></div>
+     <div class="col"><div class="h">Quand</div><div class="days">${JOURS.map(([j,s])=>`<span class="d ${a.jours.includes(j)?"on":""}" title="${j}">${s}</span>`).join("")}</div></div>
+   </div>
+   <div class="body"><div class="photo" style="background:var(${c})">${img}</div>
+   <div><div class="text">${paras.map(p=>`<p>${esc(p)}</p>`).join("")}</div>
+     <div class="tags">${disc.map(d=>`<span class="tag">${esc(d)}</span>`).join("")}</div>
+   <div class="contact">${a.email?`<a class="btn full" href="mailto:${esc(a.email)}">Contacter l'association</a>`:""}
+     ${a.site?`<a class="btn" href="${esc(a.site)}" target="_blank" rel="noopener">Site web ↗</a>`:""}
+     ${a.tel?`<span class="btn">${esc(a.tel)}</span>`:""}${a.insta?`<span class="btn">${esc(a.insta)}</span>`:""}</div>
+   </div></div>
+  </div></div>`;}
+function bind(){
+  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>go({dim:b.dataset.dim,q:""}));
+  document.querySelectorAll(".tile").forEach(b=>b.onclick=()=>go({view:"list",val:b.dataset.val}));
+  document.querySelectorAll(".row").forEach(b=>b.onclick=()=>{const id=+b.dataset.id;go({view:"fiche",id});if(inGrist)grist.setCursorPos({rowId:id});});
+  document.querySelectorAll(".crumb").forEach(b=>b.onclick=()=>go({view:b.dataset.go}));
+  const q=document.getElementById("q");if(q)q.oninput=()=>{state.q=q.value;const p=q.selectionStart;render();const n=document.getElementById("q");n.focus();n.setSelectionRange(p,p);};
+}
+inGrist=window.parent!==window&&typeof grist!=="undefined";
+if(inGrist){grist.ready({requiredAccess:"read table"});grist.onRecords(recs=>{ASSOS=recs.map(toAsso);render();});}
+else{ASSOS=(window.DEMO||[]).map((r,i)=>toAsso({...r,id:i+1}));render();}
+</script>
+</body>
+</html>
