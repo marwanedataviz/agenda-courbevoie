@@ -196,7 +196,16 @@ function bind(){
 }
 inGrist=window.parent!==window&&typeof grist!=="undefined";
 if(inGrist){grist.ready({requiredAccess:"read table"});grist.onRecords(recs=>{ASSOS=recs.map(toAsso);render();});}
-else{ASSOS=(window.DEMO||[]).map((r,i)=>toAsso({...r,id:i+1}));render();}
+else if(window.DEMO){ASSOS=window.DEMO.map((r,i)=>toAsso({...r,id:i+1}));render();}
+else{
+  // Site public : lit data.json, mis à jour toutes les heures depuis Grist par GitHub
+  fetch("data.json?t="+Date.now()).then(r=>r.json()).then(d=>{
+    const t=Object.values(d.tables||{}).find(c=>"Domaine" in c&&"Publics" in c);
+    if(!t){document.getElementById("app").innerHTML='<p class="empty">Annuaire en cours de mise à jour.</p>';return;}
+    const cols=Object.keys(t);
+    ASSOS=t.id.map((id,i)=>{const r={};cols.forEach(c=>r[c]=t[c][i]);return toAsso(r);});render();
+  }).catch(()=>{document.getElementById("app").innerHTML='<p class="empty">Impossible de charger l\'annuaire.</p>';});
+}
 </script>
 </body>
 </html>

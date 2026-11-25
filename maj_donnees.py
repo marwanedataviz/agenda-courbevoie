@@ -1,4 +1,5 @@
-"""Lit le document Grist, garde les activités validées et écrit data.json pour l'agenda public."""
+"""Lit le document Grist et écrit data.json pour l'agenda public et l'annuaire en ligne
+(activités validées, lieux, fermetures et associations validées)."""
 import json, os, urllib.request, datetime
 
 SERVEUR = os.environ.get("GRIST_SERVER", "https://grist.numerique.gouv.fr")
@@ -49,6 +50,11 @@ for t in api("/tables")["tables"]:
         tables[tid] = en_colonnes(records)
     elif "Du" in champs and "Au" in champs:                         # table des fermetures
         tables[tid] = en_colonnes(records)
+    elif "Domaine" in champs and "Publics" in champs:               # table des associations (annuaire)
+        cols = en_colonnes(records, lambda f: f.get("Statut") == "Validée")
+        for c in ("Activites", "Nb_d_activites", "manualSort"):
+            cols.pop(c, None)
+        tables[tid] = cols
 
 if not any("Jours" in c for c in tables.values()):
     raise SystemExit("Table des activités introuvable : rien n'a été écrit.")
