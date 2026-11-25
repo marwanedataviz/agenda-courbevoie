@@ -68,7 +68,7 @@
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute"><filter id="navyTiles" color-interpolation-filters="sRGB">
-  <feColorMatrix type="matrix" values="0.29 0.29 0.29 0 0.09  0.31 0.31 0.31 0 0.125  0.31 0.31 0.31 0 0.525  0 0 0 1 0"/></filter></svg>
+  <feColorMatrix type="matrix" values="0.29 0.29 0.29 0 -0.03  0.31 0.31 0.31 0 0.0  0.31 0.31 0.31 0 0.40  0 0 0 1 0"/></filter></svg>
 <div id="map"></div>
 <div id="intro"><div id="ring"></div></div>
 <button id="skip">Passer l'animation</button>
@@ -189,8 +189,8 @@ function closeCard(){selected=null;document.getElementById("card").classList.rem
 function start(){
   map=L.map("map",{zoomControl:false,attributionControl:true,scrollWheelZoom:true});
   L.control.zoom({position:"bottomleft"}).addTo(map);
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",{subdomains:"abcd",maxZoom:19,
-    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'}).addTo(map);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",{maxNativeZoom:16,maxZoom:19,
+    attribution:'Fond de carte &copy; Esri, HERE, Garmin &middot; &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
   layer=L.layerGroup().addTo(map);
   const pts=LIEUX.map(l=>[l.lat,l.lng]);
   if(pts.length)map.fitBounds(L.latLngBounds(pts).pad(.12)); else map.setView([48.897,2.255],14);
