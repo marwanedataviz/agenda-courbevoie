@@ -16,6 +16,7 @@
   #map{position:fixed;inset:0;background:#172086;clip-path:circle(0px at 50% 50%);}
   #map.anim{transition:clip-path 1s cubic-bezier(.7,0,.2,1)}
   .leaflet-tile-pane{filter:url(#navyTiles)}
+  body.osm .leaflet-tile-pane{filter:url(#navyOSM)}
   .leaflet-container{font-family:inherit;background:#172086}
   .leaflet-control-attribution{font-size:10px;background:rgba(255,255,255,.7)!important}
   .leaflet-control-zoom a{color:var(--navy)!important;font-weight:700}
@@ -68,7 +69,9 @@
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute"><filter id="navyTiles" color-interpolation-filters="sRGB">
-  <feColorMatrix type="matrix" values="0.29 0.29 0.29 0 -0.03  0.31 0.31 0.31 0 0.0  0.31 0.31 0.31 0 0.40  0 0 0 1 0"/></filter></svg>
+  <feColorMatrix type="matrix" values="0.29 0.29 0.29 0 -0.03  0.31 0.31 0.31 0 0.0  0.31 0.31 0.31 0 0.40  0 0 0 1 0"/></filter>
+  <filter id="navyOSM" color-interpolation-filters="sRGB">
+  <feColorMatrix type="matrix" values="0.48 0.94 0.18 0 -1.38  0.51 1.0 0.19 0 -1.44  0.48 0.94 0.18 0 -0.94  0 0 0 1 0"/></filter></svg>
 <div id="map"></div>
 <div id="intro"><div id="ring"></div></div>
 <button id="skip">Passer l'animation</button>
@@ -189,8 +192,17 @@ function closeCard(){selected=null;document.getElementById("card").classList.rem
 function start(){
   map=L.map("map",{zoomControl:false,attributionControl:true,scrollWheelZoom:true});
   L.control.zoom({position:"bottomleft"}).addTo(map);
-  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",{maxNativeZoom:16,maxZoom:19,
+  // Fond Esri (rues sans texte) + calque des noms de rues ; secours OpenStreetMap si Esri ne répond pas
+  const ESRI="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/";
+  const base=L.tileLayer(ESRI+"World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",{maxNativeZoom:16,maxZoom:19,
     attribution:'Fond de carte &copy; Esri, HERE, Garmin &middot; &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+  const labels=L.tileLayer(ESRI+"World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",{maxNativeZoom:16,maxZoom:19,opacity:.85}).addTo(map);
+  let loaded=0, errors=0, switched=false;
+  base.on("tileload",()=>loaded++);
+  base.on("tileerror",()=>{errors++; if(!switched&&loaded===0&&errors>=3){switched=true; map.removeLayer(base); map.removeLayer(labels);
+    document.body.classList.add("osm");
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,
+      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);}});
   layer=L.layerGroup().addTo(map);
   const pts=LIEUX.map(l=>[l.lat,l.lng]);
   if(pts.length)map.fitBounds(L.latLngBounds(pts).pad(.12)); else map.setView([48.897,2.255],14);
